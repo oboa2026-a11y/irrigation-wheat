@@ -1,0 +1,34 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Test document connection rule
+    match /test/{docId} {
+      allow read, write: if true;
+    }
+
+    // Campaign metadata collection
+    match /campaign_meta/{metaId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Zonal campaign indicators collection
+    match /zones/{zoneId} {
+      allow read: if true;
+      allow write: if request.resource.data.plannedAreaHa is number
+                   && request.resource.data.plannedAreaHa >= 0;
+    }
+
+    // GIS Irrigation Schemes collection with coordinate and field validation
+    match /schemes/{schemeId} {
+      allow read: if true;
+      allow create, update: if request.resource.data.name is string
+                            && request.resource.data.lat is number
+                            && request.resource.data.lng is number
+                            && request.resource.data.commandAreaHa is number
+                            && request.resource.data.commandAreaHa >= 0;
+      allow delete: if true;
+    }
+  }
+}

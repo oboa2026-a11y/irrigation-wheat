@@ -1,0 +1,102 @@
+{
+  "entities": {
+    "ZoneRecord": {
+      "title": "ZoneRecord",
+      "description": "Zonal campaign indicators for Oromia Irrigated Wheat Campaign",
+      "type": "object",
+      "properties": {
+        "id": { "type": "number", "description": "Numeric Zone ID" },
+        "name": { "type": "string", "description": "Zone Name in Afaan Oromoo" },
+        "nameEn": { "type": "string", "description": "Zone Name in English" },
+        "plannedAreaHa": { "type": "number", "description": "Total planned wheat area in ha" },
+        "preparedAreaHa": { "type": "number", "description": "Total prepared land in ha" },
+        "sownAreaHa": { "type": "number", "description": "Total sown wheat area in ha" },
+        "modernIrrigationHa": { "type": "number" },
+        "pumpIrrigationHa": { "type": "number" },
+        "traditionalIrrigationHa": { "type": "number" },
+        "expectedProductionQ": { "type": "number" },
+        "avgYieldQHa": { "type": "number" },
+        "clustersEstablished": { "type": "number" },
+        "clusterAreaHa": { "type": "number" },
+        "investorCount": { "type": "number" },
+        "investorSownHa": { "type": "number" },
+        "topChallenge": { "type": "string" },
+        "challengeSeverity": { "type": "string", "enum": ["Low", "Medium", "High"] }
+      },
+      "required": ["id", "name", "nameEn", "plannedAreaHa", "preparedAreaHa", "sownAreaHa"]
+    },
+    "IrrigationScheme": {
+      "title": "IrrigationScheme",
+      "description": "GIS Irrigation Scheme registry record with coordinates and operational indicators",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique scheme identifier" },
+        "name": { "type": "string", "description": "Official scheme name" },
+        "zoneId": { "type": "number", "description": "Parent zone ID" },
+        "zoneName": { "type": "string", "description": "Parent zone name" },
+        "woreda": { "type": "string", "description": "Woreda administrative division" },
+        "lat": { "type": "number", "description": "GPS Latitude coordinate" },
+        "lng": { "type": "number", "description": "GPS Longitude coordinate" },
+        "commandAreaHa": { "type": "number", "description": "Total command area in hectares" },
+        "serviceableAreaHa": { "type": "number", "description": "Current serviceable area in hectares" },
+        "actualIrrigatedWheatHa": { "type": "number", "description": "Current wheat area irrigated in hectares" },
+        "status": {
+          "type": "string",
+          "enum": ["functional", "partly_functional", "non_functional"],
+          "description": "Functional status of the irrigation scheme"
+        },
+        "waterAvailability": {
+          "type": "string",
+          "enum": ["adequate", "limited", "unavailable"],
+          "description": "Water availability status"
+        },
+        "method": {
+          "type": "string",
+          "enum": ["Furrow", "Basin", "Sprinkler", "Drip", "Flood"],
+          "description": "Irrigation distribution method"
+        },
+        "waterSource": {
+          "type": "string",
+          "enum": ["River", "Stream", "Spring", "Lake", "Dam", "Borehole", "Shallow Well", "Pond"],
+          "description": "Water source category"
+        },
+        "pumpsTotal": { "type": "number", "description": "Total pumps on scheme" },
+        "pumpsFunctional": { "type": "number", "description": "Functional pumps on scheme" },
+        "operationalProblem": {
+          "type": "string",
+          "enum": ["None", "Pump breakdown", "Canal damage", "Siltation", "Water shortage", "Power cut"],
+          "description": "Primary operational impediment"
+        },
+        "beneficiariesCount": { "type": "number", "description": "Total farmer household beneficiaries" }
+      },
+      "required": ["id", "name", "zoneId", "zoneName", "woreda", "lat", "lng", "commandAreaHa", "status"]
+    },
+    "CampaignMeta": {
+      "title": "CampaignMeta",
+      "description": "Global sync metadata and campaign state",
+      "type": "object",
+      "properties": {
+        "version": { "type": "number" },
+        "lastUpdated": { "type": "string" },
+        "campaignYear": { "type": "string" },
+        "zonesCount": { "type": "number" },
+        "schemesCount": { "type": "number" }
+      },
+      "required": ["version", "lastUpdated"]
+    }
+  },
+  "firestore": {
+    "/campaign_meta/{metaId}": {
+      "schema": "CampaignMeta",
+      "description": "Metadata document tracking sync versions and global campaign state"
+    },
+    "/zones/{zoneId}": {
+      "schema": "ZoneRecord",
+      "description": "Individual zone documents containing planned and actual wheat indicators"
+    },
+    "/schemes/{schemeId}": {
+      "schema": "IrrigationScheme",
+      "description": "GIS Irrigation scheme documents with GPS coordinates, command areas, pump status"
+    }
+  }
+}
