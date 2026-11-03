@@ -239,7 +239,9 @@ export const OromiaGisMap: React.FC<Props> = ({
         setSelectedScheme(scheme);
         const editBtn = document.getElementById(`btn-edit-${scheme.id}`);
         if (editBtn) {
-          editBtn.onclick = () => {
+          editBtn.onclick = (e) => {
+            e.stopPropagation();
+            mapInstanceRef.current?.closePopup();
             setModalScheme(scheme);
             setIsModalOpen(true);
           };
