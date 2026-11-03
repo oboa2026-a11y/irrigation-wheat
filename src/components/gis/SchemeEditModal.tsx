@@ -99,6 +99,16 @@ export const SchemeEditModal: React.FC<SchemeEditModalProps> = ({
     setErrors({});
   }, [scheme, presetCoords, isOpen]);
 
+  // Keyboard escape listener to close modal (called unconditionally before early return)
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const validate = (): boolean => {
@@ -139,18 +149,6 @@ export const SchemeEditModal: React.FC<SchemeEditModalProps> = ({
       }));
     }
   };
-
-  // Keyboard escape listener to close modal
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
-
-  if (!isOpen) return null;
 
   const modalContent = (
     <div
